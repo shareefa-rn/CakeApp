@@ -15,7 +15,13 @@ class CakeViewModel : ViewModel() {
         repository.getCakes().enqueue(object : Callback<List<Cake>> {
             override fun onResponse(call: Call<List<Cake>>, response: Response<List<Cake>>) {
                 if (response.isSuccessful) {
-                    cakesLiveData.value = response.body()
+                   // cakesLiveData.value = response.body()
+
+                    response.body()?.let { cakes ->
+                        val uniqueCakes = cakes.distinctBy { it.title } // Remove duplicates
+                        val sortedCakes = uniqueCakes.sortedBy { it.title } // Sort by name
+                        cakesLiveData.value = sortedCakes.toList() // Convert to List to ensure compatibility
+                    }
                 }
           /*      isLoading.value = false
                 if (response.isSuccessful) {
